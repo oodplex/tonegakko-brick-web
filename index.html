@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>TONEGAKKO — An Island of Sound (0.43.9 Risograph Web)</title>
-  <meta name="description" content="Play Tonegakko 0.43.9 Risograph Edition with Tactile 3D-to-Riso turning Sonari directly in your browser." />
+  <meta name="description" content="Play Tonegakko 0.43.9 Risograph Edition with Tactile 3D-to-Riso turning Sonari directly in your browser using mouse, touch, keyboard, or gamepad." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f7f2e8'/%3E%3Cpolygon points='5,26 24,26 26,4' fill='%23f6d62a'/%3E%3Cpolygon points='26,4 25,13 18,12' fill='%23ea4a26'/%3E%3Ccircle cx='17' cy='19' r='2.5' fill='%23fefcf6'/%3E%3Ccircle cx='22' cy='19' r='2.5' fill='%23fefcf6'/%3E%3Ccircle cx='17.5' cy='19' r='1.3' fill='%23201c30'/%3E%3Ccircle cx='22.5' cy='19' r='1.3' fill='%23201c30'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,10 +48,10 @@
     .shell {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 12px 14px 20px;
+      padding: 10px 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 9px;
     }
 
     /* ---- ZINE MASTHEAD ---- */
@@ -60,8 +60,8 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding-bottom: 8px;
+      gap: 8px;
+      padding-bottom: 7px;
       border-bottom: 2px dotted var(--blue);
     }
 
@@ -72,7 +72,7 @@
     }
 
     .wordmark {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       letter-spacing: 0.04em;
       line-height: 1;
@@ -83,7 +83,7 @@
 
     .badge {
       font-family: 'Space Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       background: var(--yel);
       color: var(--ink);
@@ -92,6 +92,7 @@
       box-shadow: 2px 2px 0 var(--pink);
       transform: rotate(-1.2deg);
       display: inline-block;
+      user-select: none;
     }
 
     .toolbar {
@@ -121,6 +122,7 @@
       padding: 5px 9px;
       cursor: pointer;
       transition: background 0.1s, color 0.1s;
+      user-select: none;
     }
 
     .pill-btn + .pill-btn {
@@ -147,6 +149,11 @@
       box-shadow: 1px 1px 0 var(--ink);
     }
 
+    .tool-btn.active-toggle {
+      background: var(--blue);
+      color: var(--paper-white);
+    }
+
     .tool-btn.sound-off {
       background: var(--red);
       color: var(--paper-white);
@@ -168,7 +175,7 @@
     .stage-wrap {
       position: relative;
       width: 100%;
-      max-width: min(960px, calc((100dvh - 285px) * 4 / 3));
+      max-width: min(980px, calc((100dvh - 196px) * 4 / 3));
       min-width: min(100%, 300px);
       margin: 0 auto;
       aspect-ratio: 4 / 3;
@@ -178,8 +185,12 @@
       overflow: hidden;
     }
 
-    body.pad-hidden .stage-wrap {
-      max-width: min(1024px, calc((100dvh - 120px) * 4 / 3));
+    body:not(.pad-hidden) .stage-wrap {
+      max-width: min(900px, calc((100dvh - 340px) * 4 / 3));
+    }
+
+    body.keys-hidden.pad-hidden .stage-wrap {
+      max-width: min(1024px, calc((100dvh - 146px) * 4 / 3));
     }
 
     #canvas {
@@ -190,6 +201,14 @@
       image-rendering: crisp-edges;
       outline: none;
       background: var(--paper);
+      touch-action: none;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #canvas.dragging {
+      cursor: grabbing;
     }
 
     .overlay {
@@ -200,7 +219,7 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      background: rgba(247, 242, 232, 0.86);
+      background: rgba(247, 242, 232, 0.88);
       backdrop-filter: blur(2px);
       text-align: center;
       padding: 20px;
@@ -218,7 +237,7 @@
       border: 3px solid var(--ink);
       box-shadow: 6px 6px 0 var(--blue);
       padding: 22px 30px;
-      max-width: 440px;
+      max-width: 460px;
     }
 
     .overlay-title {
@@ -232,7 +251,7 @@
       font-size: 16px;
       color: var(--muted);
       margin: 0 0 18px;
-      line-height: 1.35;
+      line-height: 1.38;
     }
 
     .wake-btn {
@@ -251,19 +270,12 @@
       transition: transform 0.08s;
     }
 
-    .wake-btn:hover {
-      background: #ffe14d;
-    }
-
+    .wake-btn:hover { background: #ffe14d; }
     .wake-btn:active {
       transform: translate(2px, 2px);
       box-shadow: 2px 2px 0 var(--pink);
     }
-
-    .wake-btn:disabled {
-      opacity: 0.65;
-      cursor: wait;
-    }
+    .wake-btn:disabled { opacity: 0.65; cursor: wait; }
 
     .loader-bar {
       width: 100%;
@@ -281,10 +293,161 @@
       transition: width 0.2s ease;
     }
 
+    /* ---- QUICK ACTION BAR (MOUSE + TOUCH) ---- */
+    .quick-bar {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      user-select: none;
+    }
+
+    .qbtn {
+      appearance: none;
+      border: 2px solid var(--ink);
+      background: var(--paper-white);
+      color: var(--ink);
+      font-family: 'Barlow Semi Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 6px 11px;
+      min-height: 36px;
+      border-radius: 5px;
+      box-shadow: 0 2.5px 0 var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      touch-action: manipulation;
+      transition: transform 0.06s, box-shadow 0.06s, background 0.1s;
+    }
+
+    .qbtn:hover { background: var(--paper-2); }
+    .qbtn:active {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 var(--ink);
+    }
+
+    .qbtn .qk {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      opacity: 0.58;
+    }
+
+    .qbtn.q-play { background: var(--yel); }
+    .qbtn.q-play:hover { background: #ffe14d; }
+    .qbtn.q-son { background: #e8f4fc; }
+    .qbtn.q-son:hover { background: #d5ecfb; }
+    .qbtn.q-active { background: var(--pink); color: var(--paper-white); }
+    .qbtn.q-active .qk { opacity: 0.85; }
+    .qbtn.q-menu { background: var(--violet); color: var(--paper-white); }
+    .qbtn.q-menu .qk { opacity: 0.8; }
+
+    /* ---- PLAYABLE 8-NOTE SCALE RIBBON ---- */
+    .keys-strip {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr) auto;
+      gap: 5px;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .keys-strip.collapsed {
+      display: none;
+    }
+
+    .note-key {
+      appearance: none;
+      border: 2px solid var(--ink);
+      background: var(--paper-white);
+      color: var(--ink);
+      border-radius: 6px;
+      box-shadow: 0 3px 0 var(--ink);
+      height: 44px;
+      padding: 4px 2px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      touch-action: none;
+      transition: transform 0.04s, box-shadow 0.04s, background 0.06s;
+    }
+
+    .note-key .deg {
+      font-family: 'Barlow Semi Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .note-key .hk {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      opacity: 0.55;
+      line-height: 1;
+    }
+
+    .note-key[data-note="0"] { border-top: 4px solid var(--red); }
+    .note-key[data-note="1"] { border-top: 4px solid var(--yel); }
+    .note-key[data-note="2"] { border-top: 4px solid var(--blue); }
+    .note-key[data-note="3"] { border-top: 4px solid var(--pink); }
+    .note-key[data-note="4"] { border-top: 4px solid var(--teal); }
+    .note-key[data-note="5"] { border-top: 4px solid var(--violet); }
+    .note-key[data-note="6"] { border-top: 4px solid var(--mint); }
+    .note-key[data-note="7"] { border-top: 4px solid var(--red); }
+
+    .note-key.active {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 var(--ink);
+      background: var(--blue);
+      color: var(--paper-white);
+    }
+
+    .note-key.active .hk { opacity: 0.9; }
+
+    .oct-btn {
+      appearance: none;
+      border: 2px solid var(--ink);
+      background: var(--paper-2);
+      color: var(--ink);
+      border-radius: 6px;
+      box-shadow: 0 3px 0 var(--ink);
+      height: 44px;
+      padding: 0 11px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.15;
+    }
+
+    .oct-btn.high {
+      background: var(--pink);
+      color: var(--paper-white);
+    }
+
     /* ---- VIRTUAL TRIMUI BRICK HANDHELD PAD ---- */
     .pad-deck {
       width: 100%;
-      max-width: 960px;
+      max-width: 980px;
       margin: 0 auto;
       background: var(--paper-white);
       border: 2.5px solid var(--ink);
@@ -318,7 +481,6 @@
       gap: 12px;
     }
 
-    /* D-PAD */
     .dpad {
       display: grid;
       grid-template-columns: repeat(3, 48px);
@@ -333,7 +495,6 @@
       border-radius: 6px;
     }
 
-    /* CENTER META BUTTONS */
     .meta-cluster {
       display: flex;
       flex-direction: column;
@@ -374,7 +535,6 @@
       color: var(--paper-white);
     }
 
-    /* ABXY DIAMOND */
     .abxy {
       display: grid;
       grid-template-columns: repeat(3, 50px);
@@ -383,7 +543,6 @@
       justify-self: end;
     }
 
-    /* TACTILE RISO BUTTON */
     .gbtn {
       appearance: none;
       border: 2px solid var(--ink);
@@ -413,10 +572,7 @@
       opacity: 0.62;
     }
 
-    .gbtn.round {
-      border-radius: 999px;
-    }
-
+    .gbtn.round { border-radius: 999px; }
     .gbtn.btn-a { background: var(--red); color: var(--paper-white); }
     .gbtn.btn-b { background: var(--yel); color: var(--ink); }
     .gbtn.btn-x { background: var(--blue); color: var(--paper-white); }
@@ -438,48 +594,55 @@
 
     /* ---- CHEAT SHEET FOOTER ---- */
     .colophon {
-      max-width: 960px;
+      max-width: 980px;
       width: 100%;
       margin: 0 auto;
-      padding-top: 8px;
+      padding-top: 7px;
       border-top: 2px dotted var(--ink);
       display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 12.5px;
       color: var(--muted);
     }
 
-    .hints {
+    .hint-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px 12px;
+      gap: 5px 12px;
       align-items: center;
+    }
+
+    .hint-cat {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--paper-2);
+      border: 1.5px solid var(--ink);
+      padding: 1px 5px;
     }
 
     .hint kbd {
       font-family: 'Space Mono', monospace;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       background: var(--paper-white);
       color: var(--ink);
       border: 1.5px solid var(--ink);
-      padding: 1px 5px;
+      padding: 0 4px;
       margin-right: 3px;
     }
 
-    .colophon a {
-      color: var(--blue);
-      font-weight: 700;
-      text-decoration: none;
-      border-bottom: 1.5px solid var(--blue);
-    }
-
     @media (max-width: 680px) {
-      .shell { padding: 8px 8px 16px; gap: 8px; }
-      .wordmark { font-size: 22px; }
+      .shell { padding: 8px 8px 16px; gap: 7px; }
+      .wordmark { font-size: 21px; }
+      .qbtn { font-size: 12px; padding: 6px 8px; min-height: 36px; }
+      .qbtn .qk { display: none; }
+      .note-key { height: 48px; }
+      .note-key .hk { display: none; }
+      .oct-btn { height: 48px; padding: 0 8px; font-size: 10px; }
       .pad-deck { padding: 10px 10px 12px; }
       .pad-main {
         grid-template-columns: 1fr 1fr;
@@ -508,14 +671,14 @@
       </div>
       <div class="toolbar">
         <div class="pill-group" role="group" aria-label="Print Edition">
-          <button class="pill-btn active" data-ed="0">Hybrid</button>
-          <button class="pill-btn" data-ed="1">Ganmo</button>
-          <button class="pill-btn" data-ed="2">Mint</button>
-          <button class="pill-btn" data-ed="3">Night</button>
-          <button class="pill-btn" data-ed="4">Three Ink</button>
+          <button class="pill-btn active" data-ed="0" type="button">Hybrid</button>
+          <button class="pill-btn" data-ed="1" type="button">Ganmo</button>
+          <button class="pill-btn" data-ed="2" type="button">Mint</button>
+          <button class="pill-btn" data-ed="3" type="button">Night</button>
+          <button class="pill-btn" data-ed="4" type="button">Three Ink</button>
         </div>
         <button id="soundBtn" class="tool-btn sound-off" type="button">Sound: Off</button>
-        <button id="padToggleBtn" class="tool-btn" type="button">Hide Pad</button>
+        <button id="padToggleBtn" class="tool-btn" type="button">Brick Pad</button>
         <button id="fsBtn" class="tool-btn" type="button">Fullscreen</button>
       </div>
     </header>
@@ -532,11 +695,36 @@
       </div>
     </main>
 
-    <section class="pad-deck" id="padDeck" aria-label="Handheld controls">
+    <nav class="quick-bar" aria-label="Quick island controls">
+      <button class="qbtn" data-act="0" type="button">Island <span class="qk">Esc</span></button>
+      <button class="qbtn q-play" data-act="1" type="button">▶ Play <span class="qk">Space</span></button>
+      <button class="qbtn q-son" data-act="7" type="button">Sound Pages <span class="qk">]</span></button>
+      <button class="qbtn" data-act="6" type="button">Map <span class="qk">Tab</span></button>
+      <button class="qbtn" data-act="8" type="button">Actions <span class="qk">S</span></button>
+      <button class="qbtn" data-act="3" type="button">Undo <span class="qk">⌘Z</span></button>
+      <button class="qbtn" data-act="4" type="button">Redo</button>
+      <button class="qbtn" data-act="2" type="button">Pads <span class="qk">1</span></button>
+      <button class="qbtn q-active" id="keysToggleBtn" type="button">Scale Keys</button>
+      <button class="qbtn q-menu" data-act="5" type="button">Menu <span class="qk">M</span></button>
+    </nav>
+
+    <section class="keys-strip" id="keysStrip" aria-label="Playable scale notes">
+      <button class="note-key" data-note="0" type="button"><span class="deg">1</span><span class="hk">D</span></button>
+      <button class="note-key" data-note="1" type="button"><span class="deg">2</span><span class="hk">F</span></button>
+      <button class="note-key" data-note="2" type="button"><span class="deg">3</span><span class="hk">G</span></button>
+      <button class="note-key" data-note="3" type="button"><span class="deg">4</span><span class="hk">H</span></button>
+      <button class="note-key" data-note="4" type="button"><span class="deg">5</span><span class="hk">J</span></button>
+      <button class="note-key" data-note="5" type="button"><span class="deg">6</span><span class="hk">K</span></button>
+      <button class="note-key" data-note="6" type="button"><span class="deg">7</span><span class="hk">L</span></button>
+      <button class="note-key" data-note="7" type="button"><span class="deg">8</span><span class="hk">;</span></button>
+      <button class="oct-btn" id="octBtn" type="button" title="Shift scale strip up one octave">OCT<span>+0</span></button>
+    </section>
+
+    <section class="pad-deck" id="padDeck" aria-label="Handheld TrimUI Brick controls">
       <div class="shoulders">
         <div class="shoulder-pair">
           <button class="gbtn btn-sh" data-btn="6" type="button">L2 <span class="kbd">1</span></button>
-          <button class="gbtn btn-sh" data-btn="4" type="button">L1 <span class="kbd">Q</span></button>
+          <button class="gbtn btn-sh" data-btn="4" type="button">L1 <span class="kbd">Q / [</span></button>
         </div>
         <div class="latch-row">
           <span>HOLD:</span>
@@ -545,7 +733,7 @@
           <button class="latch-btn" data-latch="7" type="button">R2</button>
         </div>
         <div class="shoulder-pair">
-          <button class="gbtn btn-sh" data-btn="5" type="button">R1 <span class="kbd">W</span></button>
+          <button class="gbtn btn-sh" data-btn="5" type="button">R1 <span class="kbd">W / ]</span></button>
           <button class="gbtn btn-sh" data-btn="7" type="button">R2 <span class="kbd">2</span></button>
         </div>
       </div>
@@ -567,40 +755,45 @@
           <div class="meta-row">
             <button class="gbtn btn-meta" data-btn="8" type="button">SELECT <span class="kbd">⌫</span></button>
             <button class="gbtn btn-meta btn-menu" data-btn="10" type="button">MENU <span class="kbd">M</span></button>
-            <button class="gbtn btn-meta" data-btn="9" type="button">START <span class="kbd">↵</span></button>
+            <button class="gbtn btn-meta" data-btn="9" type="button">START <span class="kbd">Space</span></button>
           </div>
         </div>
 
         <div class="abxy" aria-label="Action buttons">
           <div></div>
-          <button class="gbtn round btn-x" data-btn="2" type="button">X<span class="kbd">S</span></button>
+          <button class="gbtn round btn-x" data-btn="2" type="button">X<span class="kbd">S / Tab</span></button>
           <div></div>
           <button class="gbtn round btn-y" data-btn="3" type="button">Y<span class="kbd">A</span></button>
           <div></div>
-          <button class="gbtn round btn-a" data-btn="0" type="button">A<span class="kbd">X</span></button>
+          <button class="gbtn round btn-a" data-btn="0" type="button">A<span class="kbd">X / ⇧</span></button>
           <div></div>
-          <button class="gbtn round btn-b" data-btn="1" type="button">B<span class="kbd">Z</span></button>
+          <button class="gbtn round btn-b" data-btn="1" type="button">B<span class="kbd">Z / Esc</span></button>
           <div></div>
         </div>
       </div>
     </section>
 
     <footer class="colophon">
-      <div class="hints">
-        <span class="hint"><kbd>↑↓←→</kbd>Move</span>
-        <span class="hint"><kbd>X</kbd>A (Wake/Edit)</span>
-        <span class="hint"><kbd>Hold X + ↑↓←→</kbd>Pitch/Phrase</span>
-        <span class="hint"><kbd>Z</kbd>B (Back)</span>
-        <span class="hint"><kbd>S</kbd>X (Undo/Actions)</span>
-        <span class="hint"><kbd>A</kbd>Y (Tap/Sneeze)</span>
-        <span class="hint"><kbd>Q/W</kbd>L1/R1 Pages</span>
-        <span class="hint"><kbd>1</kbd>L2 Pads</span>
-        <span class="hint"><kbd>2</kbd>R2 Teach/FX</span>
-        <span class="hint"><kbd>↵</kbd>Play</span>
-        <span class="hint"><kbd>M</kbd>Menu</span>
+      <div class="hint-row">
+        <span class="hint-cat">Mouse / Touch</span>
+        <span class="hint"><strong>Click/Tap</strong> Sonari, tabs, steps, stamps &amp; menus</span>
+        <span class="hint"><strong>Double-click</strong> Sonari → Close-Up</span>
+        <span class="hint"><strong>Drag</strong> Sonari (phrase/pitch), knobs, steps, reeds &amp; BPM</span>
+        <span class="hint"><strong>Scroll</strong> knob/pitch/BPM</span>
+        <span class="hint"><strong>Right-click</strong> Back</span>
       </div>
-      <div>
-        Saves automatically in browser · USB/BT gamepads supported
+      <div class="hint-row">
+        <span class="hint-cat">Keyboard</span>
+        <span class="hint"><kbd>Space</kbd>Play</span>
+        <span class="hint"><kbd>↑↓←→</kbd>Move</span>
+        <span class="hint"><kbd>Shift+↑↓←→</kbd>Edit</span>
+        <span class="hint"><kbd>D F G H J K L ;</kbd>Play Scale</span>
+        <span class="hint"><kbd>[</kbd><kbd>]</kbd>Pages</span>
+        <span class="hint"><kbd>Tab</kbd>Actions / Hold Map</span>
+        <span class="hint"><kbd>Esc</kbd>Back</span>
+        <span class="hint"><kbd>⌘Z</kbd>Undo</span>
+        <span class="hint"><kbd>M</kbd>Menu</span>
+        <span class="hint">· Auto-saves in browser · USB/BT gamepads supported</span>
       </div>
     </footer>
   </div>
@@ -615,12 +808,34 @@
     const soundBtn = document.getElementById('soundBtn');
     const padDeck = document.getElementById('padDeck');
     const padToggleBtn = document.getElementById('padToggleBtn');
+    const keysStrip = document.getElementById('keysStrip');
+    const keysToggleBtn = document.getElementById('keysToggleBtn');
+    const octBtn = document.getElementById('octBtn');
     const fsBtn = document.getElementById('fsBtn');
 
     let runtimeReady = false;
     let started = false;
-    let audioUnlocked = false;
+    let octShift = 0;
     const latched = new Set();
+
+    // Auto-adapt virtual TrimUI Brick pad: compact desktop view vs touch-first handheld pad
+    const isCoarsePointer = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+      || ('ontouchstart' in window && navigator.maxTouchPoints > 0);
+    if (!isCoarsePointer) {
+      padDeck.classList.add('collapsed');
+      document.body.classList.add('pad-hidden');
+      padToggleBtn.textContent = 'Brick Pad';
+    } else {
+      padToggleBtn.textContent = 'Hide Pad';
+      padToggleBtn.classList.add('active-toggle');
+    }
+
+    function refocusCanvas(btn) {
+      if (btn && btn.blur) btn.blur();
+      if (started && canvas.focus) {
+        try { canvas.focus({ preventScroll: true }); } catch (_) {}
+      }
+    }
 
     function getAudioCtx() {
       if (window.Module && Module.SDL2 && Module.SDL2.audioContext) return Module.SDL2.audioContext;
@@ -631,7 +846,6 @@
     function updateSoundUI() {
       const ctx = getAudioCtx();
       const running = ctx && ctx.state === 'running';
-      audioUnlocked = !!running;
       soundBtn.textContent = running ? 'Sound: On' : 'Sound: Off';
       soundBtn.classList.toggle('sound-on', running);
       soundBtn.classList.toggle('sound-off', !running);
@@ -669,22 +883,26 @@
       setTimeout(() => {
         unlockAudio();
         syncEditionPills();
-        canvas.focus();
+        refocusCanvas();
       }, 60);
       setInterval(updateSoundUI, 1000);
       setInterval(syncEditionPills, 1500);
     }
 
-    // Wake button & keyboard quick-start
-    wakeBtn.addEventListener('click', startIsland);
-    soundBtn.addEventListener('click', () => {
+    // Wake button & sound button
+    wakeBtn.addEventListener('click', (e) => {
+      startIsland();
+      refocusCanvas(e.currentTarget);
+    });
+    soundBtn.addEventListener('click', (e) => {
       if (!started && runtimeReady) startIsland();
       else unlockAudio();
+      refocusCanvas(e.currentTarget);
     });
 
     // Edition switcher
     document.querySelectorAll('.pill-btn[data-ed]').forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
         if (!started && runtimeReady) startIsland();
         unlockAudio();
         const ed = Number(btn.dataset.ed);
@@ -692,27 +910,221 @@
           Module._bk_web_set_edition(ed);
           syncEditionPills();
         }
+        refocusCanvas(e.currentTarget);
       });
     });
 
-    // Show/hide virtual pad
-    padToggleBtn.addEventListener('click', () => {
+    // Show/hide virtual handheld pad
+    padToggleBtn.addEventListener('click', (e) => {
       const hidden = padDeck.classList.toggle('collapsed');
       document.body.classList.toggle('pad-hidden', hidden);
-      padToggleBtn.textContent = hidden ? 'Show Pad' : 'Hide Pad';
+      padToggleBtn.textContent = hidden ? 'Brick Pad' : 'Hide Pad';
+      padToggleBtn.classList.toggle('active-toggle', !hidden);
+      refocusCanvas(e.currentTarget);
+    });
+
+    // Show/hide playable 8-note scale strip
+    keysToggleBtn.addEventListener('click', (e) => {
+      const hidden = keysStrip.classList.toggle('collapsed');
+      document.body.classList.toggle('keys-hidden', hidden);
+      keysToggleBtn.classList.toggle('q-active', !hidden);
+      refocusCanvas(e.currentTarget);
     });
 
     // Fullscreen stage
-    fsBtn.addEventListener('click', () => {
+    fsBtn.addEventListener('click', (e) => {
       const el = document.getElementById('stageWrap');
       if (!document.fullscreenElement) {
         (el.requestFullscreen || el.webkitRequestFullscreen || (() => {})).call(el);
       } else {
         (document.exitFullscreen || (() => {})).call(document);
       }
+      refocusCanvas(e.currentTarget);
     });
 
-    // Virtual handheld buttons (multi-touch + mouse safe)
+    // Quick Action Bar (direct C actions: Island, Play, Sound Pages, Map, Actions, Undo, Redo, Pads, Menu)
+    document.querySelectorAll('.qbtn[data-act]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        if (!started && runtimeReady) startIsland();
+        unlockAudio();
+        const act = Number(btn.dataset.act);
+        if (runtimeReady && Module._bk_web_action) {
+          Module._bk_web_action(act);
+        }
+        refocusCanvas(e.currentTarget);
+      });
+    });
+
+    // ---- DIRECT CANVAS MOUSE / TOUCH / WHEEL INTERACTION ----
+    function canvasCoords(e) {
+      const r = canvas.getBoundingClientRect();
+      const x = Math.max(0, Math.min(1023, Math.round((e.clientX - r.left) * 1024 / r.width)));
+      const y = Math.max(0, Math.min(767, Math.round((e.clientY - r.top) * 768 / r.height)));
+      return [x, y];
+    }
+
+    let canvasPointerId = null;
+
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      if (!started && runtimeReady) {
+        startIsland();
+        return;
+      }
+      unlockAudio();
+      refocusCanvas();
+      if (!runtimeReady) return;
+      // Right-click -> quick Back / Close overlay
+      if (e.button === 2) {
+        if (Module._bk_web_action) Module._bk_web_action(9);
+        return;
+      }
+      if (canvasPointerId !== null) return;
+      canvasPointerId = e.pointerId;
+      if (canvas.setPointerCapture) {
+        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+      canvas.classList.add('dragging');
+      const [x, y] = canvasCoords(e);
+      if (Module._bk_web_ptr_down) Module._bk_web_ptr_down(x, y);
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== canvasPointerId || !runtimeReady) return;
+      e.preventDefault();
+      const [x, y] = canvasCoords(e);
+      if (Module._bk_web_ptr_move) Module._bk_web_ptr_move(x, y);
+    });
+
+    function endCanvasPointer(e) {
+      if (e.pointerId !== canvasPointerId) return;
+      canvasPointerId = null;
+      canvas.classList.remove('dragging');
+      if (!runtimeReady) return;
+      const [x, y] = canvasCoords(e);
+      if (Module._bk_web_ptr_up) Module._bk_web_ptr_up(x, y);
+    }
+
+    canvas.addEventListener('pointerup', endCanvasPointer);
+    canvas.addEventListener('pointercancel', endCanvasPointer);
+    canvas.addEventListener('lostpointercapture', endCanvasPointer);
+
+    // Trackpad + notched mouse wheel support
+    let wheelAcc = 0;
+    let wheelLastT = 0;
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (!started || !runtimeReady || !Module._bk_web_wheel) return;
+      unlockAudio();
+      const now = performance.now();
+      if (now - wheelLastT > 240) wheelAcc = 0;
+      wheelLastT = now;
+      const [x, y] = canvasCoords(e);
+      if (e.deltaMode === 1) {
+        // Discrete line-based mouse wheel
+        const dir = Math.sign(e.deltaY);
+        if (dir) Module._bk_web_wheel(x, y, dir);
+      } else {
+        // Smooth pixel-based trackpad / high-res wheel
+        wheelAcc += e.deltaY;
+        const step = 26;
+        while (Math.abs(wheelAcc) >= step) {
+          const dir = Math.sign(wheelAcc);
+          Module._bk_web_wheel(x, y, dir);
+          wheelAcc -= dir * step;
+        }
+      }
+    }, { passive: false });
+
+    // ---- MULTI-TOUCH & GLISSANDO 8-NOTE SCALE RIBBON ----
+    const noteEls = Array.from(document.querySelectorAll('.note-key[data-note]'));
+    const pointerNotes = new Map();     // pointerId -> noteIndex (0..15)
+    const noteRefCount = new Array(16).fill(0);
+
+    function refreshNoteVisuals() {
+      noteEls.forEach((el) => {
+        const base = Number(el.dataset.note);
+        const lit = noteRefCount[base] > 0 || noteRefCount[base + 8] > 0;
+        el.classList.toggle('active', lit);
+      });
+    }
+
+    function noteAcquire(n) {
+      if (n < 0 || n >= 16) return;
+      noteRefCount[n]++;
+      if (noteRefCount[n] === 1 && runtimeReady && Module._bk_web_note) {
+        Module._bk_web_note(n, 1);
+      }
+      refreshNoteVisuals();
+    }
+
+    function noteRelease(n) {
+      if (n < 0 || n >= 16) return;
+      if (noteRefCount[n] > 0) noteRefCount[n]--;
+      if (noteRefCount[n] === 0 && runtimeReady && Module._bk_web_note) {
+        Module._bk_web_note(n, 0);
+      }
+      refreshNoteVisuals();
+    }
+
+    function noteElAt(clientX, clientY) {
+      const el = document.elementFromPoint(clientX, clientY);
+      return el ? el.closest('.note-key[data-note]') : null;
+    }
+
+    keysStrip.addEventListener('pointerdown', (e) => {
+      const keyEl = e.target.closest('.note-key[data-note]');
+      if (!keyEl) return;
+      e.preventDefault();
+      if (!started && runtimeReady) startIsland();
+      unlockAudio();
+      if (keysStrip.setPointerCapture) {
+        try { keysStrip.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+      const n = Number(keyEl.dataset.note) + octShift;
+      pointerNotes.set(e.pointerId, n);
+      noteAcquire(n);
+    });
+
+    keysStrip.addEventListener('pointermove', (e) => {
+      if (!pointerNotes.has(e.pointerId)) return;
+      e.preventDefault();
+      const keyEl = noteElAt(e.clientX, e.clientY);
+      const prev = pointerNotes.get(e.pointerId);
+      const next = keyEl ? Number(keyEl.dataset.note) + octShift : -1;
+      if (next !== prev) {
+        if (prev >= 0) noteRelease(prev);
+        if (next >= 0) noteAcquire(next);
+        pointerNotes.set(e.pointerId, next);
+      }
+    });
+
+    function endNotePointer(e) {
+      if (!pointerNotes.has(e.pointerId)) return;
+      const prev = pointerNotes.get(e.pointerId);
+      pointerNotes.delete(e.pointerId);
+      if (prev >= 0) noteRelease(prev);
+      refocusCanvas();
+    }
+
+    keysStrip.addEventListener('pointerup', endNotePointer);
+    keysStrip.addEventListener('pointercancel', endNotePointer);
+    keysStrip.addEventListener('lostpointercapture', endNotePointer);
+
+    octBtn.addEventListener('click', (e) => {
+      octShift = octShift ? 0 : 8;
+      octBtn.classList.toggle('high', octShift > 0);
+      octBtn.innerHTML = octShift ? 'OCT<span>+1</span>' : 'OCT<span>+0</span>';
+      refocusCanvas(e.currentTarget);
+    });
+
+    // Highlight scale strip when physical home-row keys (D F G H J K L ;) are played
+    const homeKeyMap = {
+      KeyD: 0, KeyF: 1, KeyG: 2, KeyH: 3,
+      KeyJ: 4, KeyK: 5, KeyL: 6, Semicolon: 7
+    };
+
+    // ---- VIRTUAL HANDHELD BUTTONS (MULTI-TOUCH + MOUSE SAFE) ----
     function setPadBtn(idx, down) {
       if (!runtimeReady || !Module._bk_web_btn) return;
       if (!down && latched.has(idx)) return;
@@ -735,6 +1147,7 @@
         e.preventDefault();
         btn.classList.remove('pressed');
         setPadBtn(idx, false);
+        refocusCanvas();
       };
       btn.addEventListener('pointerdown', down);
       btn.addEventListener('pointerup', up);
@@ -742,10 +1155,10 @@
       btn.addEventListener('lostpointercapture', up);
     });
 
-    // Chord latch toggles (for mouse users holding A / L2 / R2 while pressing D-pad/pads)
+    // Chord latch toggles (for mouse users holding A / L2 / R2)
     document.querySelectorAll('.latch-btn[data-latch]').forEach((lbtn) => {
       const idx = Number(lbtn.dataset.latch);
-      lbtn.addEventListener('click', () => {
+      lbtn.addEventListener('click', (e) => {
         if (!started && runtimeReady) startIsland();
         unlockAudio();
         const padEl = document.querySelector(`.gbtn[data-btn="${idx}"]`);
@@ -760,23 +1173,63 @@
           if (padEl) padEl.classList.add('latched-pad', 'pressed');
           if (runtimeReady && Module._bk_web_btn) Module._bk_web_btn(idx, 1);
         }
+        refocusCanvas(e.currentTarget);
       });
     });
 
-    // Prevent Arrow keys / Space / Backspace from scrolling or navigating browser back
-    const blockKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Backspace']);
+    // ---- DESKTOP KEYBOARD ERGONOMICS ----
+    const blockKeys = new Set([
+      'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+      'Space', 'Backspace', 'Tab'
+    ]);
+
     window.addEventListener('keydown', (e) => {
+      // Cmd/Ctrl+Z -> Undo, Cmd/Ctrl+Shift+Z or Cmd/Ctrl+Y -> Redo
+      if ((e.metaKey || e.ctrlKey) && !e.altKey) {
+        if (e.code === 'KeyZ' && started && runtimeReady && Module._bk_web_action) {
+          e.preventDefault();
+          Module._bk_web_action(e.shiftKey ? 4 : 3);
+          return;
+        }
+        if (e.code === 'KeyY' && started && runtimeReady && Module._bk_web_action) {
+          e.preventDefault();
+          Module._bk_web_action(4);
+          return;
+        }
+      }
       if (blockKeys.has(e.code)) e.preventDefault();
       if (!started && runtimeReady) {
         startIsland();
       } else {
         unlockAudio();
       }
+      if (e.code in homeKeyMap && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const idx = homeKeyMap[e.code];
+        if (noteEls[idx]) noteEls[idx].classList.add('active');
+      }
     }, { passive: false });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code in homeKeyMap) {
+        const idx = homeKeyMap[e.code];
+        if (noteEls[idx] && noteRefCount[idx] === 0 && noteRefCount[idx + 8] === 0) {
+          noteEls[idx].classList.remove('active');
+        }
+      }
+    });
+
+    window.addEventListener('blur', () => {
+      // Release any stuck pointer notes if window loses focus
+      for (const [, n] of pointerNotes) {
+        if (n >= 0) noteRelease(n);
+      }
+      pointerNotes.clear();
+      refreshNoteVisuals();
+    });
 
     window.addEventListener('pointerdown', unlockAudio);
 
-    // Emscripten Module config
+    // ---- EMSCRIPTEN MODULE CONFIG ----
     window.Module = {
       canvas: canvas,
       noInitialRun: true,
@@ -796,7 +1249,7 @@
         const finishReady = () => {
           runtimeReady = true;
           loaderBar.style.display = 'none';
-          statusText.textContent = '14 Tactile 3D-to-Riso Sonari ready. Click or press any key to wake the island with sound!';
+          statusText.textContent = '14 Tactile 3D-to-Riso Sonari ready. Click, touch, or press any key to wake the island with sound!';
           wakeBtn.textContent = 'Wake the Island';
           wakeBtn.disabled = false;
         };
