@@ -681,7 +681,7 @@
         <div class="wordmark" aria-label="TONEGAKKO">
           <span class="c1">TO</span><span class="c2">NE</span><span class="c1">GA</span><span class="c2">KK</span><span class="c1">O</span>
         </div>
-        <span class="badge">0.45 GAME</span>
+        <span class="badge">0.45.1</span>
       </div>
     </header>
 
@@ -689,9 +689,10 @@
       <canvas id="canvas" width="1024" height="832" tabindex="0" oncontextmenu="event.preventDefault()"></canvas>
       <div class="overlay" id="overlay">
         <div class="overlay-card">
-          <h1 class="overlay-title">AN ISLAND OF SOUND</h1>
-          <p class="overlay-sub" id="statusText">Waking the Sonari creatures &amp; printing the island…</p>
+          <h1 class="overlay-title">TONEGAKKO</h1>
+          <p class="overlay-sub" id="statusText">An island of musical creatures. Wake them up, mix their beats and tunes, and discover 32 styles to invite new friends ashore.</p>
           <button class="wake-btn" id="wakeBtn" type="button" disabled>Loading…</button>
+          <p style="margin:10px 0 0;font-size:13px;color:var(--muted);">Includes a quick 6-step interactive guide — skip anytime.</p>
           <div class="loader-bar" id="loaderBar"><div class="loader-fill" id="loaderFill"></div></div>
         </div>
       </div>
@@ -974,8 +975,8 @@
           runtimeReady = true;
           applyFrame();
           loaderBar.style.display = 'none';
-          statusText.textContent = 'Wake sleeping musical creatures, discover 32 island styles, and welcome 14 Sonari friends ashore.';
-          wakeBtn.textContent = 'Start the Island';
+          statusText.textContent = 'An island of musical creatures. Wake them up, mix their beats and tunes, and discover 32 hidden styles to invite new friends ashore.';
+          wakeBtn.textContent = 'Start Playing';
           wakeBtn.disabled = false;
         };
         try {
