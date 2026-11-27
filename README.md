@@ -1,18 +1,21 @@
-# TONEGAKKO — An Island of Sound (`0.46.0` Web)
+# TONEGAKKO — An Island of Sound (`0.47.0` Web)
 
-Play **Tonegakko `0.46.0` Risograph Edition** directly in your browser — an island of musical creatures where you wake them up, mix their rhythms and moods, and discover 32 hidden styles to invite 14 new friends ashore. Features an **8-step core-gameplay discovery tutorial** with animated pointers and a live recipe coach, tactile Risograph horizontal slide bars across every sub-menu, a 3-page How to Play manual, an interactive Goal Book, all 5 Print Editions, real C99 synth engine, and 14 starter sounds compiled into a single WebAssembly bundle.
+Play **Tonegakko `0.47.0` Risograph Edition** directly in your browser — an island of musical creatures where you wake them up, mix their rhythms and moods, and discover 32 hidden styles to invite 14 new friends ashore. Features an **M8-inspired 5-Tab Live Visual Field Guide**, an **8-step core-gameplay discovery tutorial** with animated pointers and a live recipe coach, tactile Risograph horizontal slide bars across every sub-menu, an interactive Goal Book, all 5 Print Editions, real C99 synth engine, and 14 starter sounds compiled into a single WebAssembly bundle.
 
 **Play live:** https://oodplex.github.io/tonegakko-brick-web/
 
 ![14 Tactile 3D-to-Riso Sonari 360-degree turntable](sonari-turntable.gif)
 
-## What's New in `0.46.0`
-- **8-Step Core-Gameplay Discovery Walkthrough:** Teaches Tonegakko's real gameplay loop by playing through real discoveries — wake a creature & fill the dots for `FIRST LIGHT`, add drums to invite `WORMLE` (`HEARTH`), rest drums & drag a tune for `TIDECALL`, play 6 live notes on `KEYS` for `HUMALONG`, open `BOOK` to `PIN GOAL`, **actively hunt & solve your pinned Book recipe live with smart yellow-chip pointers** (creatures, tune drags, and `TEMPO / FX` slide bars!) to unlock Style 5/32, sculpt a voice with `SOUND` slide bars, and head toward `DAYBREAK`!
-- **Tactile Risograph Slide Bars Across All Sub-Menus:** Every draggable parameter (`MOOD`, `LEVEL`, `ECHO`, `PITCH`, `TEMPO`, `SPACE`, `SWING`, `CUTOFF`, `ENV`, `WOBBLE`, `PATTERN`, `STEPS HARD/HOLD/ROLL`, `FX DETAIL 1/2`, `MIXER`, `MENU VOLUME`, and Island `TEMPO / FX` top cards) now renders as a real horizontal slide bar with a chunky draggable thumb handle — click anywhere on the track to jump or slide smoothly! Discrete controls (`VOICE`, `KEY`, `SCALE`, `WAVE`, `DRIVE`, `WHEN`, `WANDER`, `TONE`) render as distinct `v` Choice Pills that open the tap-to-pick sheet.
-- **Polished Console Sub-Menus:** Framed Risograph control cards along the bottom, tinted studio sidebars, mini live sliders in the left Controls column, framed page tabs, and elevated `ACTIONS` & `MENU` sheets.
-- **Elaborate 8-Step Guided Tour with Animated Pointers:** Bite-sized steps with multi-line plain-English explanation cards (*Why* + *Do This*) and pulsing highlight frames + bouncing Risograph arrows pointing straight at the exact selectable creature, `PLAY` button, `SOUND` / `TEMPO / FX` / `KEYS` / `BOOK` dock button, `MOOD` slide bar, `TEMPO` slide bar, scale keys, or `PIN GOAL` button — with 1-tap `SKIP GUIDE` and `REPLAY GUIDE`.
-- **3-Page `HOW TO PLAY` Manual & Interactive Goal Book:** Plain-English 6-card overview (`MENU → HOW TO PLAY`), clickable **`GOALS` | `SKY MAP` | `FRIENDS`** Book tabs, green/yellow live checklist chips, `UNLOCKS <NAME>` tags, `PIN GOAL`, and `HEAR AGAIN`.
-- **Native-Feeling Phone Portrait Layout:** Edge-to-edge upright frame with a large readable Companion Strip above a clean 3×2 touch dock (`KEYS`, `BOOK`, `SOUND`, `TEMPO / FX`, `ACTIONS`, `MENU`).
+## What's New in `0.47.0`
+- **5-Tab Live Visual Field Guide (`? GUIDE` on Island & `MENU -> FIELD GUIDE`):** Modeled after interactive hardware field guides, built right inside the 1024×768 Risograph frame with real-time game/audio diagrams and 1-tap jump buttons:
+  1. **`1 THE GAME`:** Live 4-stage connected flowchart reading your real band, pinned recipe chips, animated bar-dot progress, Era milestone road (`I. DUSK` -> `V. DAYBREAK`), and visual clue decoders (`Zzz`, singing rings, hint bubbles).
+  2. **`2 SCREEN TOUR`:** Annotated miniature map of the Island screen with colored leader lines pointing straight at every bar, creature cue, and dock button (every callout clickable!), plus a visual guide to all **6 Sound Families** with real sprites.
+  3. **`3 WHAT TO DO`:** 8 visual task cards explaining **what can be done** and **where to find each function** — each with a 1-tap **`GO >`** jump button straight into that tool!
+  4. **`4 SOUND FLOW`:** Live 5-stage signal-flow schematic for the currently selected creature (`1. VOICE` -> `2. FILTER` curve -> `3. SHAPE` ADSR -> `4. MIX & FX` pan/sends -> `5. LIVE OUT` real-time oscilloscope!), plus visual Slide Bar vs Choice Pill decoders and live `WOBBLE (LFO)` & Euclidean `ARP` visualizers.
+  5. **`5 ALL SCREENS`:** Interactive 4-column clickable map of all 13 Tonegakko rooms with plain-English "what it does" labels, live `HERE` highlight, and a split Touch/Mouse + Keyboard shortcut reference.
+- **8-Step Core-Gameplay Discovery Walkthrough:** Teaches Tonegakko's real gameplay loop by playing through real discoveries — wake a creature & fill the dots for `FIRST LIGHT`, add drums to invite `WORMLE` (`HEARTH`), rest drums & drag a tune for `TIDECALL`, play 6 live notes on `KEYS` for `HUMALONG`, open `BOOK` to `PIN GOAL`, actively hunt & solve your pinned Book recipe live with smart yellow-chip pointers to unlock Style 5/32, sculpt a voice with `SOUND` slide bars, and head toward `DAYBREAK`!
+- **Tactile Risograph Slide Bars Across All Sub-Menus:** Every draggable parameter renders as a real horizontal slide bar with a chunky draggable thumb handle; discrete pickers render as `v` Choice Pills.
+- **Native-Feeling Phone Portrait Layout:** Edge-to-edge upright frame with a large readable Companion Strip above a clean touch dock.
 
 ## Controls
 
