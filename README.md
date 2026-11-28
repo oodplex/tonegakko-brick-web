@@ -1,21 +1,21 @@
-# TONEGAKKO — An Island of Sound (`0.47.0` Web)
+# TONEGAKKO — An Island of Sound (`0.49.0` Web)
 
-Play **Tonegakko `0.47.0` Risograph Edition** directly in your browser — an island of musical creatures where you wake them up, mix their rhythms and moods, and discover 32 hidden styles to invite 14 new friends ashore. Features an **M8-inspired 5-Tab Live Visual Field Guide**, an **8-step core-gameplay discovery tutorial** with animated pointers and a live recipe coach, tactile Risograph horizontal slide bars across every sub-menu, an interactive Goal Book, all 5 Print Editions, real C99 synth engine, and 14 starter sounds compiled into a single WebAssembly bundle.
+Play **Tonegakko `0.49.0` Risograph Edition** directly in your browser: an island of musical creatures where you wake them up, mix their rhythms and moods, and discover 32 hidden styles to invite 14 new friends ashore. The same C99 synth engine and 14 starter sounds as the Brick build, compiled into a single WebAssembly bundle.
 
 **Play live:** https://oodplex.github.io/tonegakko-brick-web/
 
 ![14 Tactile 3D-to-Riso Sonari 360-degree turntable](sonari-turntable.gif)
 
-## What's New in `0.47.0`
-- **5-Tab Live Visual Field Guide (`? GUIDE` on Island & `MENU -> FIELD GUIDE`):** Modeled after interactive hardware field guides, built right inside the 1024×768 Risograph frame with real-time game/audio diagrams and 1-tap jump buttons:
-  1. **`1 THE GAME`:** Live 4-stage connected flowchart reading your real band, pinned recipe chips, animated bar-dot progress, Era milestone road (`I. DUSK` -> `V. DAYBREAK`), and visual clue decoders (`Zzz`, singing rings, hint bubbles).
-  2. **`2 SCREEN TOUR`:** Annotated miniature map of the Island screen with colored leader lines pointing straight at every bar, creature cue, and dock button (every callout clickable!), plus a visual guide to all **6 Sound Families** with real sprites.
-  3. **`3 WHAT TO DO`:** 8 visual task cards explaining **what can be done** and **where to find each function** — each with a 1-tap **`GO >`** jump button straight into that tool!
-  4. **`4 SOUND FLOW`:** Live 5-stage signal-flow schematic for the currently selected creature (`1. VOICE` -> `2. FILTER` curve -> `3. SHAPE` ADSR -> `4. MIX & FX` pan/sends -> `5. LIVE OUT` real-time oscilloscope!), plus visual Slide Bar vs Choice Pill decoders and live `WOBBLE (LFO)` & Euclidean `ARP` visualizers.
-  5. **`5 ALL SCREENS`:** Interactive 4-column clickable map of all 13 Tonegakko rooms with plain-English "what it does" labels, live `HERE` highlight, and a split Touch/Mouse + Keyboard shortcut reference.
-- **8-Step Core-Gameplay Discovery Walkthrough:** Teaches Tonegakko's real gameplay loop by playing through real discoveries — wake a creature & fill the dots for `FIRST LIGHT`, add drums to invite `WORMLE` (`HEARTH`), rest drums & drag a tune for `TIDECALL`, play 6 live notes on `KEYS` for `HUMALONG`, open `BOOK` to `PIN GOAL`, actively hunt & solve your pinned Book recipe live with smart yellow-chip pointers to unlock Style 5/32, sculpt a voice with `SOUND` slide bars, and head toward `DAYBREAK`!
-- **Tactile Risograph Slide Bars Across All Sub-Menus:** Every draggable parameter renders as a real horizontal slide bar with a chunky draggable thumb handle; discrete pickers render as `v` Choice Pills.
-- **Native-Feeling Phone Portrait Layout:** Edge-to-edge upright frame with a large readable Companion Strip above a clean touch dock.
+## What's New in `0.49.0`
+- **Six chapters that teach as you play:** one creature and one idea of music each: A VOICE, THE BEAT (clap along), A TUNE, HIGH AND LOW (echo me), FAST AND SLOW, GRUMPY OR SUNNY. Each ends with its word in the Book's WORDS page. A short starter quiz picks your band before the boat ride.
+- **Record a sound:** give any creature a voice of your own through the microphone.
+- **Help that grows:** it starts simple and adds a card with every new thing you unlock.
+- **A day on the island:** a 64-bar day with dawn, dusk and night, moments to punch in, seasons, fog, storms and rain. At night the light falls on the buildings and creatures too, and the lanterns glow.
+- **Glow, paid every bar:** spend it on lanterns, the bridge and the places.
+- **The Sonari walk:** real walking steps instead of floating.
+- **Five places to build:** a windmill, lighthouse, workshop, bandstand and observatory, each with its own spot on a reshaped island. Each opens a page of the synth, and the Workshop's shelf sells ten new engines. The Book has a PLAN page.
+- **The wardrobe:** a pedlar's boat moors by day with hats, neck pieces, inks and patterns, fitted to each creature. Treats include fireworks, rain or a clear sky, boat paint and parcels, and you can collect sets. The Book has a WARDROBE page.
+- **Studio mode, padlocks on pages not open yet, and a position slider on every scrolling list.**
 
 ## Controls
 
@@ -33,4 +33,4 @@ Play **Tonegakko `0.47.0` Risograph Edition** directly in your browser — an is
 
 ### Gamepad & Saves
 - **Gamepad:** Any USB or Bluetooth controller works automatically via the browser Gamepad API
-- **Saves:** Islands, Guide progress, pinned Goals, Book discoveries, and Print Edition persist automatically in browser storage (IndexedDB)
+- **Saves:** Islands, chapters, Glow, places, the wardrobe, Book discoveries and Print Edition persist automatically in browser storage (IndexedDB)

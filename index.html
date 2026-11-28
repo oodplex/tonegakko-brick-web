@@ -681,7 +681,7 @@
         <div class="wordmark" aria-label="TONEGAKKO">
           <span class="c1">TO</span><span class="c2">NE</span><span class="c1">GA</span><span class="c2">KK</span><span class="c1">O</span>
         </div>
-        <span class="badge">0.47.0</span>
+        <span class="badge">0.49.0</span>
       </div>
     </header>
 
@@ -692,7 +692,7 @@
           <h1 class="overlay-title">TONEGAKKO</h1>
           <p class="overlay-sub" id="statusText">An island of musical creatures. Wake them up, mix their beats and tunes, and discover 32 styles to invite new friends ashore.</p>
           <button class="wake-btn" id="wakeBtn" type="button" disabled>Loading…</button>
-          <p style="margin:10px 0 0;font-size:13px;color:var(--muted);">Includes an 8-step interactive guide with pointers — skip anytime.</p>
+          <p style="margin:10px 0 0;font-size:13px;color:var(--muted);">Six short chapters teach you as you play. Skip anytime.</p>
           <div class="loader-bar" id="loaderBar"><div class="loader-fill" id="loaderFill"></div></div>
         </div>
       </div>
@@ -742,7 +742,7 @@
 
     function refocusCanvas(btn) {
       if (btn && btn.blur) btn.blur();
-      if (started && canvas.focus) {
+      if (started && canvas.focus && document.activeElement !== canvas) {
         try { canvas.focus({ preventScroll: true }); } catch (_) {}
       }
     }
@@ -767,6 +767,86 @@
       }
     }
 
+    // ---- THE SOUND'S BLOCK: short, so a key answers fast; longer if this device cannot keep up ----
+    // The game makes its sound a block at a time on this page's own thread. A short block (512 frames, about
+    // 11 ms) is heard soon after the finger lands; a slow phone that cannot draw a frame in that time would
+    // crackle. So the page watches for blocks that arrived after they were due, and when several do it asks the
+    // game for the next size up and remembers that for this device. ?buf=256 (512, 1024, 2048) in the address
+    // fixes the size, for trying it.
+    const BUF_KEY = 'tonegakko-buf';
+    const BUF_SIZES = [256, 512, 1024, 2048];
+    const audioWatch = { buf: 512, fixed: false, late: 0, total: 0, win0: 0, opened: 0, grown: 0 };
+    window.__tgAudio = audioWatch;       // (for looking at it from the console)
+
+    function wantedBuf() {
+      let n = 0;
+      try {
+        const q = new URLSearchParams(location.search).get('buf');
+        if (q) { n = parseInt(q, 10); audioWatch.fixed = BUF_SIZES.includes(n); }
+        if (!audioWatch.fixed) {         // (kept as "1024@when": after three days the short block is tried again)
+          const kept = (localStorage.getItem(BUF_KEY) || '').split('@');
+          if (kept.length === 2 && Date.now() - parseInt(kept[1], 10) < 3 * 86400000) n = parseInt(kept[0], 10);
+        }
+      } catch (_) {}
+      return BUF_SIZES.includes(n) ? n : 0;
+    }
+
+    function setAudioBuf(n, remember) {
+      if (!Module._bk_web_audio_buf) return;
+      const S = Module.SDL2 || window.SDL2;
+      let held = false;
+      // SDL closes its AudioContext with its last device, and a new one would stay silent until the next tap:
+      // a stand-in for a second device keeps the one we have while the first is opened again.
+      if (S && S.audioContext && S.capture === undefined) { S.capture = { tgHold: true }; held = true; }
+      // (and the old device's node must fall silent first: kept alive with its AudioContext it would go on
+      // asking a device that is no longer there for sound)
+      const old = S && S.audio && S.audio.scriptProcessorNode;
+      if (old) old.onaudioprocess = null;
+      try {
+        audioWatch.buf = Module._bk_web_audio_buf(n);
+      } finally {
+        const S2 = Module.SDL2 || window.SDL2;
+        if (held && S2 && S2.capture && S2.capture.tgHold) S2.capture = undefined;
+      }
+      audioWatch.late = 0;
+      audioWatch.opened = performance.now();
+      if (remember) { try { localStorage.setItem(BUF_KEY, audioWatch.buf + '@' + Date.now()); } catch (_) {} }
+      unlockAudio();
+    }
+
+    function watchAudio() {
+      const S = Module.SDL2 || window.SDL2;
+      const node = S && S.audio && S.audio.scriptProcessorNode;
+      if (!node || node.tgWatched || typeof node.onaudioprocess !== 'function') return;
+      const inner = node.onaudioprocess;
+      node.tgWatched = true;
+      if (!audioWatch.opened) audioWatch.opened = performance.now();
+      let last = 0;
+      node.onaudioprocess = function (e) {
+        const ctx = S.audioContext;
+        const now = performance.now();
+        const gap = last ? now - last : 0;
+        last = now;
+        if (ctx && !document.hidden && gap > 0 && gap < 1000) {
+          const period = node.bufferSize / ctx.sampleRate * 1000;
+          if (now - audioWatch.win0 > 8000) { audioWatch.win0 = now; audioWatch.late = 0; }
+          // The browser keeps one block in hand, so a block asked for up to one block's time late is still
+          // heard whole. Two blocks' time since the last one means this thread was held up for longer than
+          // that, and there was a gap in the sound.
+          if (now - audioWatch.opened > 3000 && gap > 2 * period + 2) {
+            audioWatch.total++;
+            if (++audioWatch.late >= 6 && !audioWatch.fixed && audioWatch.buf < 2048) {
+              audioWatch.late = 0;
+              audioWatch.grown++;
+              const next = audioWatch.buf * 2;
+              setTimeout(() => setAudioBuf(next, true), 0);
+            }
+          }
+        }
+        return inner.call(this, e);
+      };
+    }
+
     function startIsland() {
       if (!runtimeReady || started) {
         unlockAudio();
@@ -774,6 +854,10 @@
       }
       started = true;
       overlay.classList.add('hidden');
+      {
+        const n = wantedBuf();
+        if (n && Module._bk_web_audio_buf) audioWatch.buf = Module._bk_web_audio_buf(n);
+      }
       try {
         Module.callMain([]);
       } catch (e) {
@@ -784,8 +868,9 @@
         applyFrame();
         syncPaperTheme();
         refocusCanvas();
+        watchAudio();
       }, 60);
-      setInterval(() => { updateSoundUI(); syncPaperTheme(); }, 1000);
+      setInterval(() => { updateSoundUI(); syncPaperTheme(); watchAudio(); }, 1000);
     }
 
     // Match outer page & mobile status bar to active Print Edition!
@@ -853,20 +938,22 @@
         startIsland();
         return;
       }
-      unlockAudio();
-      refocusCanvas();
-      if (!runtimeReady) return;
+      if (!runtimeReady) { unlockAudio(); return; }
       if (e.button === 2) {             // right-click: back / close
+        unlockAudio();
         if (Module._bk_web_action) Module._bk_web_action(9);
         return;
       }
+      // the game hears of the finger first (a key sounds from here), the page's own housekeeping after
+      const [x, y] = canvasCoords(e);
       canvasPointers.add(e.pointerId);
+      if (Module._bk_web_touch) Module._bk_web_touch(e.pointerId, x, y, 0);
+      unlockAudio();
+      refocusCanvas();
       if (canvas.setPointerCapture) {
         try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
       }
       canvas.classList.add('dragging');
-      const [x, y] = canvasCoords(e);
-      if (Module._bk_web_touch) Module._bk_web_touch(e.pointerId, x, y, 0);
     });
 
     canvas.addEventListener('pointermove', (e) => {
